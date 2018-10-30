@@ -3,9 +3,15 @@ import datetime
 import logging
 import time
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from DynamicNetwork import DynamicNetwork
 from HazardModel import HazardModel
 from Variables.X0Intercept import *
+from Variables.X1RetweetJaccard import X1RetweetJaccard
+from Variables.X2ReciprocalInfluence import X2reciprocalInfluence
 from Variables.XSentiment import *
 from Utils.NetworkUtils import *
 from Utils.Plot import *
@@ -14,6 +20,7 @@ WEEK_IN_SECOND = 7 * 24 * 60 * 60
 STOP_STEP = 13
 # See https://github.com/yeqingyan/Sentiment_MaxEnt for program to preprocessing the sentiment data using MaxEnt
 SENTIMENT_DATA = "data/thegoodplace_sentiment_seconds.json"
+INTERACTION_DATA = "data/TheGoodPlace_interactions.p"
 
 class DateAction(argparse.Action):
     """
@@ -45,6 +52,8 @@ def main():
     # TODO For Swati, put your varialbe here.
     variables = [
         X0Intercept(),
+        #X1RetweetJaccard(g, INTERACTION_DATA)
+        X2reciprocalInfluence(g, INTERACTION_DATA)
         XSentiment(g, SENTIMENT_DATA, XSentiment.POSITIVE),     # X4Positive
         XSentiment(g, SENTIMENT_DATA, XSentiment.NEUTRAL),      # X5Neutral
         XSentiment(g, SENTIMENT_DATA, XSentiment.NEGATIVE),     # X6Negative
@@ -63,6 +72,6 @@ def main():
     plot({"Reference": ref_result, "MLE result": sim_result}, show=False)
 
 if __name__ == "__main__":
-    logging.basicConfig(filename="hazard.log", level=logging.NOTSET, format='%(asctime)s %(message)s')
+    logging.basicConfig(filename="hazard_X2.log", level=logging.NOTSET, format='%(asctime)s %(message)s')
     main()
 
