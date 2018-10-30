@@ -1,12 +1,16 @@
-import random
+#!/usr/bin/python3
+
+import logging
+import sys
+
 import networkx as nx
 
+
 class DynamicNetwork:
-    # Node attribute 'create_time' and edge attribute 'create_time' are different attributes.
-    # Node's 'create_time' is the node's adoption time.
-    # Edge's 'create_time' is when that edge created.
-    ADOPTION_TIME = 'create_time'
-    EDGE_CREATE_TIME = 'create_time'
+    # Node's 'adoption_time' is the node's adoption time.
+    # Edge's 'creation_time' is when that edge was created.
+    ADOPTION_TIMESTAMP = "adoption_time"
+    RELATION_TIMESTAMP = "creation_time"
 
     def __init__(self, g, start_date=None, intervals = None, stop_step = None):
         assert isinstance(g, nx.DiGraph), "Network must be instance of DiGraph"
@@ -28,8 +32,8 @@ class DynamicNetwork:
             }   
         """
         assert isinstance(intervals, int)
-        assert start_date != None
-        assert stop_step != None
+        assert start_date is not None
+        assert stop_step is not None
         self.fake_sentiment = False
         self.start_date = start_date
         self.intervals = intervals
@@ -40,7 +44,13 @@ class DynamicNetwork:
 
     def user_adopted_time(self, node):
         # A node's create time is its adopted time.
-        return self.network.node[node][self.ADOPTION_TIME]
+        #return self.network.node[node][self.ADOPTION_TIME]
+        network_node = self.network.node[node]
+        if self.ADOPTION_TIMESTAMP in network_node:
+            return network_node[self.ADOPTION_TIMESTAMP]
+        else:
+            logging.warning('Node {} in network is empty'.format(node))
+            return sys.maxsize # Should be larger than any real-world timestamp
 
     def friends(self, node, current_date):
         """ Return Twitter user's friends before the current_date
@@ -55,12 +65,12 @@ class DynamicNetwork:
         friends = []
         for friend in self.network.successors_iter(node):
             # return friends which edge node->friends was created before the current date
-            if (self.network[node][friend][self.EDGE_CREATE_TIME] <= current_date):
+            if self.network[node][friend][self.RELATION_TIMESTAMP] <= current_date:
                 friends.append(friend)
         return friends
 
     def num_friends(self, node, current_date):
-        return len(self.num_friends(node, current_date))
+        return len(self.friends(node, current_date))
 
     def date_to_step(self, timestamp):
         if timestamp < self.start_date:

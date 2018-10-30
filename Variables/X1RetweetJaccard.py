@@ -1,8 +1,8 @@
-from Variables.Variable import Variable
-from Utils.Interactions import Interaction
 import math
-from Utils.Utils import *
-import json
+
+from Utils.Interactions import Interaction
+from Variables.Variable import Variable
+
 
 class X1RetweetJaccard(Variable):
     def __init__(self, g, interactions_file):
@@ -28,6 +28,3 @@ class X1RetweetJaccard(Variable):
         if total_jaccard <= 0:
             return total_jaccard
         return math.log(total_jaccard)
-
-
-

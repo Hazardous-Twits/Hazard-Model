@@ -1,10 +1,15 @@
-from pandas import DataFrame
-from Utils.NetworkUtils import *
-from DynamicNetwork import DynamicNetwork
-from scipy import stats
-import numpy as np
-from HazardMLE import HazardMLE
+#!/usr/bin/python3
+
 import logging
+
+import numpy as np
+from pandas import DataFrame
+from scipy import stats
+
+from DynamicNetwork import DynamicNetwork
+from HazardMLE import HazardMLE
+from Utils.NetworkUtils import *
+
 
 class HazardModel:
     def __init__(self, g, variables):
