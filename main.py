@@ -13,6 +13,8 @@ from DynamicNetwork import DynamicNetwork
 from HazardModel import HazardModel
 from Variables.X0Intercept import *
 from Variables.XSentiment import *
+#from Variables.X7Frequency import *
+#from Variables.X11Time import *
 from Utils.NetworkUtils import *
 from Utils.Plot import *
 
@@ -42,6 +44,7 @@ def config():
     parser.add_argument('-d', action=DateAction, help='Start date(m/d/y)')
     parser.add_argument('-s', help='Sentiment data file for the hashtag')
     parser.add_argument('-i', help='Interaction data file for the hashtag')
+    #parser.add_argument('-h', help='historical tweets for the hashtag')
     return vars(parser.parse_args())
 
 def main():
@@ -51,7 +54,7 @@ def main():
     start_date = arguments['d']
     sentiment_data = arguments['s']
     interaction_data = arguments['i']
-
+    #historical_data = arguments['h']
     g = DynamicNetwork(g, start_date=start_date, intervals=WEEK_IN_SECOND, stop_step=STOP_STEP)
 
     # TODO For Swati, put your varialbe here.
@@ -62,7 +65,12 @@ def main():
         XSentiment(g, sentiment_data, XSentiment.POSITIVE),     # X4Positive
         XSentiment(g, sentiment_data, XSentiment.NEUTRAL),      # X5Neutral
         XSentiment(g, sentiment_data, XSentiment.NEGATIVE),     # X6Negative
+        #X7Frequency(g, historical_data),
     ]
+
+    # for step in range(STOP_STEP + 1):
+    #     variables.append(X11Time(g, step))
+
     for v in variables:
         assert hasattr(v, 'name'), "Each variable must have a name attribute"
 

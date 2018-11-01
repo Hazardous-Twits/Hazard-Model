@@ -124,6 +124,8 @@ class HazardModel:
                 adopted.append(num_adopted + adopted[-1])
             current_date += intervals
             step += 1
+
+            # TODO why is MLE input data one step less than the hazard simulation?
             if stop_step != -1 and step >= stop_step:
                 break
         return adopted, DataFrame(mle_input_data, columns=["ID", "Step"] + [v.name for v in self.variables] + ["Adoption"])
